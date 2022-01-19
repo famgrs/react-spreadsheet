@@ -9,6 +9,15 @@ export const setData = createAction<
   },
   "SET_DATA"
 >("SET_DATA", (data) => ({ payload: { data } }));
+export const selectEntireRow = createAction<
+  (row: number) => { payload: { row: number } },
+  "SELECT_ENTIRE_ROW"
+>("SELECT_ENTIRE_ROW", (row) => ({ payload: { row } }));
+export const selectEntireColumn = createAction<
+  (column: number) => { payload: { column: number } },
+  "SELECT_ENTIRE_COLUMN"
+>("SELECT_ENTIRE_COLUMN", (column) => ({ payload: { column } }));
+export const selectEntireTable = createAction("SELECT_ENTIRE_TABLE");
 export const select = createAction<
   (point: Point.Point) => { payload: { point: Point.Point } },
   "SELECT"
@@ -62,6 +71,10 @@ export const keyDown = createAction<
   (event: React.KeyboardEvent) => { payload: { event: React.KeyboardEvent } },
   "KEY_DOWN"
 >("KEY_DOWN", (event) => ({ payload: { event } }));
+export const keyUp = createAction<
+  (event: React.KeyboardEvent) => { payload: { event: React.KeyboardEvent } },
+  "KEY_UP"
+>("KEY_UP", (event) => ({ payload: { event } }));
 export const dragStart = createAction("DRAG_START");
 export const dragEnd = createAction("DRAG_END");
 export const commit = createAction<
