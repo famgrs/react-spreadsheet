@@ -4,7 +4,7 @@ import { Point } from "./point";
 import { PointMap } from "./point-map";
 import { PointSet } from "./point-set";
 import { Matrix } from "./matrix";
-import { Selection } from "./selection";
+import { Selections } from "./selections";
 
 /** The base type of cell data in Spreadsheet */
 export type CellBase<Value = any> = {
@@ -46,7 +46,7 @@ export type Dimensions = {
 
 export type StoreState<Cell extends CellBase = CellBase> = {
   data: Matrix<Cell>;
-  selected: Selection;
+  selected: Selections;
   copied: PointMap<Cell>;
   hasPasted: boolean;
   cut: boolean;
