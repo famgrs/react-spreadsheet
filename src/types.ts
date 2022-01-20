@@ -22,11 +22,11 @@ export type CellBase<Value = any> = {
 };
 
 // /** The base type of cell data in Spreadsheet */
-// export type CellBase2<Value = any> = CellBase & {
-//   DataEditor?: DataEditorComponent<CellBase2<Value>>;
-//   DataViewer?: DataViewerComponent<CellBase2<Value>>;
-//   validator?: (value: Value) => boolean;
-// };
+export type CellBaseValidator<Value = any> = CellBase & {
+  DataEditor?: DataEditorComponent<CellBaseValidator<Value>>;
+  DataViewer?: DataViewerComponent<CellBaseValidator<Value>>;
+  validator?: (value: Value) => boolean;
+};
 
 /**
  * A cell with it's coordinates
@@ -114,12 +114,19 @@ export type CellComponentProps<Cell extends CellBase = CellBase> = {
   setCellDimensions: (point: Point, dimensions: Dimensions) => void;
 };
 
+export type CellValidatorComponentProps<
+  Cell extends CellBaseValidator = CellBaseValidator
+> = CellComponentProps & {
+  data: Cell | undefined;
+};
+
 /** Type of the Spreadsheet Cell component */
 export type CellComponent<Cell extends CellBase = CellBase> =
   React.ComponentType<CellComponentProps<Cell>>;
 
-// export type CellComponent2<Cell extends CellBase2 = CellBase2> =
-//   React.ComponentType<CellComponentProps<Cell>>;
+export type CellValidatorComponent<
+  Cell extends CellBaseValidator = CellBaseValidator
+> = React.ComponentType<CellComponentProps<Cell>>;
 
 type DataComponentProps<Cell extends CellBase> = {
   /** The rendered cell by the component */

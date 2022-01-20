@@ -45,7 +45,7 @@ import context from "./context";
 import "./Spreadsheet.css";
 
 /** The Spreadsheet component props */
-export type Props<CellType extends Types.CellBase> = {
+export type Props<CellType extends Types.CellBase | Types.CellBaseValidator> = {
   /** The spreadsheet's data */
   data: Matrix.Matrix<CellType>;
   /** Class to be added to the spreadsheet element */
@@ -91,7 +91,7 @@ export type Props<CellType extends Types.CellBase> = {
   /** The spreadsheet's header row component */
   HeaderRow?: Types.HeaderRowComponent;
   /** The Spreadsheet's cell component. */
-  Cell?: Types.CellComponent<CellType>;
+  Cell?: Types.CellComponent<CellType> | Types.CellValidatorComponent<CellType>;
   /** Component rendered for cells in view mode. */
   DataViewer?: Types.DataViewerComponent<CellType>;
   /** Component rendered for cells in edit mode. */
@@ -225,7 +225,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       }
     }
 
-    if (state.selected !== prevState.selected) {
+    if (!Selections.equals(state.selected, prevState.selected)) {
       const points = Selections.getPoints(state.selected, state.data);
       onSelect(points);
     }

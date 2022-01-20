@@ -83,16 +83,19 @@ export function getPoints(
   selections: Selections,
   data: Matrix.Matrix<unknown>
 ): Point.Point[] {
-  const allPoints = new Set(
-    selections.reduce((points: Point.Point[], selection) => {
-      if (selection === null) {
-        return points;
-      }
-      return [...points, ...Selection.getPoints(selection, data)];
-    }, [])
-  );
+  if (!selections?.length) {
+    return [];
+  }
 
-  return Array.from(allPoints) as Point.Point[];
+  const allPoints = selections.reduce((points: Point.Point[], selection) => {
+    if (selection === null) {
+      return points;
+    }
+    const selectionPoints = Selection.getPoints(selection, data);
+    return [...points, ...selectionPoints];
+  }, []);
+
+  return allPoints;
 }
 
 /** Get concrete range in given data of given selection */
@@ -120,4 +123,41 @@ export function getSelectionsFromMatrix<T>(
   }
 
   return newMatrix;
+}
+
+export function equals(
+  selections1: Selections,
+  selections2: Selections
+): boolean {
+  if (selections1?.length !== selections2?.length) {
+    return false;
+  }
+
+  for (const s1 of selections1) {
+    let found = false;
+    for (const s2 of selections2) {
+      if (PointRange.is(s1) && PointRange.is(s2)) {
+        found =
+          s1.start.row === s2.start.row &&
+          s1.end.row === s2.end.row &&
+          s1.start.column === s2.start.column &&
+          s1.end.column === s2.end.column;
+      }
+      if (Selection.isEntireRows(s1) && Selection.isEntireRows(s2)) {
+        found = s1.start === s2.start && s1.end === s2.end;
+      }
+      if (Selection.isEntireColumns(s1) && Selection.isEntireColumns(s2)) {
+        found = s1.start === s2.start && s1.end === s2.end;
+      }
+      if (Selection.isEntireTable(s1) && Selection.isEntireTable(s2)) {
+        found = true;
+      }
+    }
+
+    if (!found) {
+      return false;
+    }
+  }
+
+  return true;
 }

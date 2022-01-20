@@ -100,7 +100,7 @@ describe("<Spreadsheet />", () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect).toHaveBeenCalledWith([Point.ORIGIN]);
   });
-  test("click activates row", () => {
+  test("click on RowIndicator activates row", () => {
     const onActivate = jest.fn();
     const onSelect = jest.fn();
     render(
@@ -262,6 +262,46 @@ describe("<Spreadsheet />", () => {
       { row: 0, column: 1 },
       { row: 1, column: 0 },
       { row: 1, column: 1 },
+    ]);
+  });
+  test("shift-click RowIndicator when a row is selected selects a range of rows", async () => {
+    const onSelect = jest.fn();
+    render(<Spreadsheet {...EXAMPLE_PROPS} onSelect={onSelect} />);
+    // Get elements
+    const element = getSpreadsheetElement();
+    const firstRowIndicator = safeQuerySelector(element, "tr[row='0'] th");
+    const thirdRowIndicator = safeQuerySelector(element, "tr[row='2'] th");
+    expect(onSelect).toBeCalledTimes(0);
+    // Activate a row
+    fireEvent.mouseDown(firstRowIndicator);
+    // Check onSelect is called with the first row on selection
+    expect(onSelect).toBeCalledTimes(1);
+    expect(onSelect).toBeCalledWith([
+      { row: 0, column: 0 },
+      { row: 0, column: 1 },
+      { row: 0, column: 2 },
+      { row: 0, column: 3 },
+    ]);
+    // Clear onSelect previous calls
+    onSelect.mockClear();
+    // Select range of rows
+    fireEvent.keyDown(element, { shiftKey: true });
+    fireEvent.mouseDown(thirdRowIndicator);
+    // Check onSelect is called with the range of cells on selection
+    expect(onSelect).toBeCalledTimes(1);
+    expect(onSelect).toBeCalledWith([
+      { row: 0, column: 0 },
+      { row: 0, column: 1 },
+      { row: 0, column: 2 },
+      { row: 0, column: 3 },
+      { row: 1, column: 0 },
+      { row: 1, column: 1 },
+      { row: 1, column: 2 },
+      { row: 1, column: 3 },
+      { row: 2, column: 0 },
+      { row: 2, column: 1 },
+      { row: 2, column: 2 },
+      { row: 2, column: 3 },
     ]);
   });
   test("setting row labels changes row indicators labels", () => {

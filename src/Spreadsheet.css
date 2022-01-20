@@ -7,6 +7,7 @@
   --border-color: hsl(2deg, 0%, 91%);
   --header-background-color: rgba(0, 0, 0, 0.04);
   --elevation: 0 2px 5px rgba(0, 0, 0, 0.4);
+  --invalid-background-color: lightpink;
 
   position: relative;
   overflow: visible;
@@ -20,6 +21,7 @@
   --background-color: black;
   --text-color: white;
   --readonly-text-color: rgba(255, 255, 255, 0.4);
+  --invalid-background-color: #f48fb1;
   --header-background-color: rgba(255, 255, 255, 0.04);
   --border-color: hsl(2deg, 0%, 19%);
 }
@@ -52,6 +54,10 @@
 
 .Spreadsheet__cell--readonly {
   color: var(--readonly-text-color);
+}
+
+.Spreadsheet__cell--invalid {
+  background-color: var(--invalid-background-color);
 }
 
 .Spreadsheet__cell,
