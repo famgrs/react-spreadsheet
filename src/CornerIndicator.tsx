@@ -15,9 +15,13 @@ const CornerIndicator: Types.CornerIndicatorComponent = ({
   }, [onSelect]);
   return (
     <th
-      className={classNames("Spreadsheet__header", {
-        "Spreadsheet__header--selected": selected,
-      })}
+      className={classNames(
+        "Spreadsheet__header",
+        "Spreadsheet__header-corner",
+        {
+          "Spreadsheet__header--selected": selected,
+        }
+      )}
       onClick={handleClick}
     />
   );

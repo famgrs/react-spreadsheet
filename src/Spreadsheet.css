@@ -13,6 +13,7 @@
   background: var(--background-color);
   color: var(--text-color);
   display: inline-block;
+  width: 100%;
 }
 
 .Spreadsheet--dark-mode {
@@ -37,6 +38,7 @@
 .Spreadsheet__table {
   border-collapse: collapse;
   table-layout: fixed;
+  width: 100%;
 }
 
 .Spreadsheet__cell,
@@ -65,6 +67,10 @@
   text-align: left;
   box-sizing: border-box;
   user-select: none;
+}
+
+.Spreadsheet__header-corner {
+  max-width: 100px;
 }
 
 .Spreadsheet__header {

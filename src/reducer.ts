@@ -239,14 +239,22 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
         ...state,
         ...handler(state, event),
         shiftKey: event.shiftKey,
-        ctrlKey: event.ctrlKey,
+        ctrlKey: event.ctrlKey || event.metaKey,
       };
     }
-    return { ...state, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey };
+    return {
+      ...state,
+      shiftKey: event.shiftKey,
+      ctrlKey: event.ctrlKey || event.metaKey,
+    };
   });
   builder.addCase(Actions.keyUp, (state, action) => {
     const { event } = action.payload;
-    return { ...state, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey };
+    return {
+      ...state,
+      shiftKey: event.shiftKey,
+      ctrlKey: event.ctrlKey || event.metaKey,
+    };
   });
   builder.addCase(Actions.dragStart, (state, action) => {
     return { ...state, dragging: true };
