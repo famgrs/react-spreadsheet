@@ -26,6 +26,8 @@ export type CellBaseValidator<Value = any> = CellBase & {
   DataEditor?: DataEditorComponent<CellBaseValidator<Value>>;
   DataViewer?: DataViewerComponent<CellBaseValidator<Value>>;
   validator?: (value: Value) => boolean;
+  errorMessage?: string;
+  required?: boolean;
 };
 
 /**

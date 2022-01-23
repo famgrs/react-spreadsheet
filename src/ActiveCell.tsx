@@ -8,9 +8,11 @@ import useSelector from "./use-selector";
 import useDispatch from "./use-dispatch";
 import { getCellDimensions } from "./util";
 
+const PADDING = 5;
+
 type Props = {
   DataEditor: Types.DataEditorComponent;
-  getBindingsForCell: Types.GetBindingsForCell<Types.CellBase>;
+  getBindingsForCell: Types.GetBindingsForCell<Types.CellBaseValidator>;
 };
 
 const ActiveCell: React.FC<Props> = (props) => {
@@ -19,13 +21,13 @@ const ActiveCell: React.FC<Props> = (props) => {
 
   const dispatch = useDispatch();
   const setCellData = React.useCallback(
-    (active: Point.Point, data: Types.CellBase) =>
+    (active: Point.Point, data: Types.CellBaseValidator) =>
       dispatch(Actions.setCellData(active, data, getBindingsForCell)),
     [dispatch, getBindingsForCell]
   );
   const edit = React.useCallback(() => dispatch(Actions.edit()), [dispatch]);
   const commit = React.useCallback(
-    (changes: Types.CommitChanges<Types.CellBase>) =>
+    (changes: Types.CommitChanges<Types.CellBaseValidator>) =>
       dispatch(Actions.commit(changes)),
     [dispatch]
   );
@@ -34,7 +36,7 @@ const ActiveCell: React.FC<Props> = (props) => {
   }, [dispatch]);
   const active = useSelector((state) => state.active);
   const mode = useSelector((state) => state.mode);
-  const cell = useSelector((state) =>
+  const cell: Types.CellBaseValidator | undefined = useSelector((state) =>
     state.active ? Matrix.get(state.active, state.data) : undefined
   );
   const dimensions = useSelector((state) =>
@@ -46,13 +48,29 @@ const ActiveCell: React.FC<Props> = (props) => {
     () => !active || !dimensions,
     [active, dimensions]
   );
+  const isInvalid = React.useMemo((): boolean => {
+    if (cell?.validator) {
+      return !cell.validator(cell?.value);
+    }
+    return false;
+  }, [cell]);
+  const isEmpty = React.useMemo((): boolean => {
+    if (cell?.required) {
+      return [null, undefined, ""].includes(cell?.value);
+    }
+    return false;
+  }, [cell]);
 
-  const initialCellRef = React.useRef<Types.CellBase | undefined>(undefined);
+  const initialCellRef = React.useRef<Types.CellBaseValidator | undefined>(
+    undefined
+  );
   const prevActiveRef = React.useRef<Point.Point | null>(null);
-  const prevCellRef = React.useRef<Types.CellBase | undefined>(undefined);
+  const prevCellRef = React.useRef<Types.CellBaseValidator | undefined>(
+    undefined
+  );
 
   const handleChange = React.useCallback(
-    (cell: Types.CellBase) => {
+    (cell: Types.CellBaseValidator) => {
       if (!active) {
         return;
       }
@@ -110,23 +128,70 @@ const ActiveCell: React.FC<Props> = (props) => {
   return hidden ? null : (
     <div
       ref={rootRef}
-      className={classnames(
-        "Spreadsheet__active-cell",
-        `Spreadsheet__active-cell--${mode}`
-      )}
-      style={dimensions}
-      onClick={mode === "view" && !readOnly ? edit : undefined}
-      tabIndex={0}
+      className={classnames("Spreadsheet__active-cell-wrapper", {
+        "Spreadsheet__active-cell-wrapper--invalid": isInvalid,
+      })}
+      style={
+        active && isInvalid
+          ? {
+              top: (dimensions?.top || 0) - PADDING,
+              left: (dimensions?.left || 0) - PADDING,
+              width: (dimensions?.width || 0) + PADDING * 2,
+              borderWidth: PADDING,
+            }
+          : {
+              ...dimensions,
+              borderWidth: 0,
+            }
+      }
+      tabIndex={-1}
     >
-      {mode === "edit" && active && (
-        <DataEditor
-          row={active.row}
-          column={active.column}
-          cell={cell}
-          // @ts-ignore
-          onChange={handleChange}
-          exitEditMode={view}
-        />
+      <div
+        className={classnames(
+          "Spreadsheet__active-cell",
+          `Spreadsheet__active-cell--${mode}`,
+          {
+            "Spreadsheet__active-cell--invalid": isInvalid,
+          }
+        )}
+        style={
+          active
+            ? {
+                height: dimensions?.height || 0,
+                width: dimensions?.width || 0,
+              }
+            : undefined
+        }
+        onClick={mode === "view" && !readOnly ? edit : undefined}
+        tabIndex={0}
+      >
+        {mode === "edit" && active && (
+          <DataEditor
+            row={active.row}
+            column={active.column}
+            cell={cell}
+            // @ts-ignore
+            onChange={handleChange}
+            exitEditMode={view}
+          />
+        )}
+      </div>
+
+      {active && (isInvalid || isEmpty) && (
+        <div className="Spreadsheet__active-cell-error">
+          {isEmpty && cell?.required ? (
+            <div className="Spreadsheet__active-cell-error-item">
+              Campo obrigatório
+            </div>
+          ) : (
+            isInvalid &&
+            cell?.errorMessage && (
+              <div className="Spreadsheet__active-cell-error-item">
+                {cell.errorMessage}
+              </div>
+            )
+          )}
+        </div>
       )}
     </div>
   );

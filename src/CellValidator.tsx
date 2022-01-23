@@ -33,6 +33,15 @@ export const CellValidator: React.FC<Types.CellValidatorComponentProps> = ({
     }),
     [row, column]
   );
+  const invalid = React.useMemo((): boolean => {
+    if (data?.validator) {
+      return !data.validator(data?.value);
+    }
+    if (data?.required) {
+      return [null, undefined, ""].includes(data?.value);
+    }
+    return false;
+  }, [data]);
 
   const handleMouseDown = React.useCallback(
     (event: React.MouseEvent<HTMLTableCellElement>) => {
@@ -78,9 +87,7 @@ export const CellValidator: React.FC<Types.CellValidatorComponentProps> = ({
     <td
       ref={rootRef}
       className={classnames("Spreadsheet__cell", data?.className, {
-        "Spreadsheet__cell--invalid": data?.validator
-          ? !data.validator(data?.value)
-          : false,
+        "Spreadsheet__cell--invalid": invalid,
         "Spreadsheet__cell--readonly": data?.readOnly,
       })}
       onMouseOver={handleMouseOver}

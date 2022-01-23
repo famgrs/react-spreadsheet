@@ -29,6 +29,8 @@ const DATA_2 = [
     {
       value: "fix misspelll",
       validator: (it: string | undefined) => it === "fix misspell",
+      errorMessage: "The field is invalid",
+      required: true,
     },
     { value: "" },
   ],
