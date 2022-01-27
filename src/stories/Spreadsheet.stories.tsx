@@ -1,19 +1,41 @@
 import * as React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-import { createEmptyMatrix, Spreadsheet, Props, CellBase } from "..";
+import {
+  createEmptyMatrix,
+  Spreadsheet,
+  Props,
+  CellBase,
+  CellBaseValidator,
+} from "..";
 import * as Matrix from "../matrix";
 import { AsyncCellDataEditor, AsyncCellDataViewer } from "./AsyncCellData";
 import CustomCell from "./CustomCell";
 import { RangeEdit, RangeView } from "./RangeDataComponents";
 import { SelectEdit, SelectView } from "./SelectDataComponents";
 import { CustomCornerIndicator } from "./CustomCornerIndicator";
+import { CellValidator } from "../CellValidator";
 
 type StringCell = CellBase<string | undefined>;
 type NumberCell = CellBase<number | undefined>;
+type StringCellValidator = CellBaseValidator<string | undefined>;
 
 const INITIAL_ROWS = 6;
 const INITIAL_COLUMNS = 4;
 const EMPTY_DATA = createEmptyMatrix<StringCell>(INITIAL_ROWS, INITIAL_COLUMNS);
+const DATA_2 = [
+  [{ value: "" }, { value: "" }, { value: "" }],
+  [
+    { value: "" },
+    {
+      value: "fix misspelll",
+      validator: (it: string | undefined) => it === "fix misspell",
+      errorMessage: "The field is invalid",
+      required: true,
+    },
+    { value: "" },
+  ],
+  [{ value: "" }, { value: "" }, { value: "" }],
+];
 
 export default {
   title: "Spreadsheet",
@@ -27,9 +49,17 @@ export const Basic: Story<Props<StringCell>> = (props) => (
   <Spreadsheet {...props} />
 );
 
+export const CustomCellValidator: Story<Props<StringCellValidator>> = (
+  props
+) => <Spreadsheet {...props} data={DATA_2} Cell={CellValidator} />;
+
 export const DarkMode: Story<Props<StringCell>> = (props) => (
   <Spreadsheet {...props} darkMode />
 );
+
+export const DarkModeCellValidator: Story<Props<StringCellValidator>> = (
+  props
+) => <Spreadsheet {...props} darkMode data={DATA_2} Cell={CellValidator} />;
 
 export const Controlled: Story<Props<StringCell>> = (props) => {
   const [data, setData] = React.useState(EMPTY_DATA);

@@ -48,7 +48,7 @@ describe("reducer", () => {
       {
         ...INITIAL_STATE,
         active: Point.ORIGIN,
-        selected: PointRange.create(Point.ORIGIN, EXAMPLE_POINT),
+        // selected: PointRange.create(Point.ORIGIN, EXAMPLE_POINT),
       },
     ],
     [

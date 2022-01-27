@@ -190,7 +190,8 @@ describe("<Spreadsheet />", () => {
     fireEvent.keyDown(element, "Enter");
     expect(onKeyDown).toHaveBeenCalledTimes(1);
   });
-  test("shift-click cell when a cell is activated selects a range of cells", async () => {
+  // test("shift-click cell when a cell is activated selects a range of cells", async () => {
+  test("shift-click cell DO NOT selects a range of cells", async () => {
     const onSelect = jest.fn();
     render(<Spreadsheet {...EXAMPLE_PROPS} onSelect={onSelect} />);
     // Get elements
@@ -203,22 +204,55 @@ describe("<Spreadsheet />", () => {
       element,
       "tr:nth-of-type(3) td:nth-of-type(2)"
     );
-    // Activate a cell
-    fireEvent.mouseDown(firstCell);
-    // Clear onSelect previous calls
-    onSelect.mockClear();
-    // Select range of cells
-    fireEvent.mouseDown(thirdCell, {
-      shiftKey: true,
-    });
+    // // Activate a cell
+    // fireEvent.mouseDown(firstCell);
+    // // Clear onSelect previous calls
+    // onSelect.mockClear();
+    // // Select range of cells
+    // fireEvent.mouseDown(thirdCell, {
+    //   shiftKey: true,
+    // });
     // Check onSelect is called with the range of cells on selection
+    // expect(onSelect).toBeCalledTimes(1);
+    // expect(onSelect).toBeCalledWith([
+    //   { row: 0, column: 0 },
+    //   { row: 0, column: 1 },
+    //   { row: 1, column: 0 },
+    //   { row: 1, column: 1 },
+    // ]);
+
+    fireEvent.mouseDown(firstCell);
+    onSelect.mockClear();
+    fireEvent.keyDown(element, {
+      shiftKey: true,
+      ctrlKey: false,
+      metaKey: false,
+    });
+    fireEvent.mouseDown(thirdCell);
     expect(onSelect).toBeCalledTimes(1);
-    expect(onSelect).toBeCalledWith([
-      { row: 0, column: 0 },
-      { row: 0, column: 1 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
-    ]);
+    expect(onSelect).toBeCalledWith([{ row: 1, column: 1 }]);
+
+    fireEvent.mouseDown(firstCell);
+    onSelect.mockClear();
+    fireEvent.keyDown(element, {
+      shiftKey: false,
+      ctrlKey: true,
+      metaKey: false,
+    });
+    fireEvent.mouseDown(thirdCell);
+    expect(onSelect).toBeCalledTimes(1);
+    expect(onSelect).toBeCalledWith([{ row: 1, column: 1 }]);
+
+    fireEvent.mouseDown(firstCell);
+    onSelect.mockClear();
+    fireEvent.keyDown(element, {
+      shiftKey: false,
+      ctrlKey: false,
+      metaKey: true,
+    });
+    fireEvent.mouseDown(thirdCell);
+    expect(onSelect).toBeCalledTimes(1);
+    expect(onSelect).toBeCalledWith([{ row: 1, column: 1 }]);
   });
   test("setting row labels changes row indicators labels", () => {
     const EXAMPLE_ROW_LABELS = ["A", "B", "C", "D"];

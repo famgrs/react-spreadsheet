@@ -238,7 +238,8 @@ describe("Selection.modifyEdge()", () => {
       Point.ORIGIN,
       EXAMPLE_DATA,
       Selection.Direction.Right,
-      PointRange.create(Point.ORIGIN, { row: 0, column: 1 }),
+      // PointRange.create(Point.ORIGIN, { row: 0, column: 1 }),
+      PointRange.create(Point.ORIGIN, Point.ORIGIN),
     ],
     [
       "modifies entire rows",
@@ -254,7 +255,8 @@ describe("Selection.modifyEdge()", () => {
       Point.ORIGIN,
       EXAMPLE_DATA,
       Selection.Direction.Right,
-      Selection.createEntireColumns(0, 1),
+      // Selection.createEntireColumns(0, 1),
+      Selection.createEntireColumns(0, 0),
     ],
     [
       "does nothing if no active and selection",

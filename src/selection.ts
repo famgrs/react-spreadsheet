@@ -271,15 +271,16 @@ export function modifyEdge(
 ): Selection {
   if (active && selection) {
     if (PointRange.is(selection)) {
-      return modifyRangeEdge(selection, active, data, edge);
+      // return modifyRangeEdge(selection, active, data, edge);
+      return selection;
     }
     switch (selection.type) {
       case EntireType.Row: {
         return modifyEntireRowsEdge(selection, active, data, edge);
       }
-      case EntireType.Column: {
-        return modifyEntireColumnsEdge(selection, active, data, edge);
-      }
+      // case EntireType.Column: {
+      //   return modifyEntireColumnsEdge(selection, active, data, edge);
+      // }
     }
   }
   return selection;

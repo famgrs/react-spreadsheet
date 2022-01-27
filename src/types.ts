@@ -20,6 +20,15 @@ export type CellBase<Value = any> = {
   DataViewer?: DataViewerComponent<CellBase<Value>>;
 };
 
+// /** The base type of cell data in Spreadsheet */
+export type CellBaseValidator<Value = any> = CellBase & {
+  DataEditor?: DataEditorComponent<CellBaseValidator<Value>>;
+  DataViewer?: DataViewerComponent<CellBaseValidator<Value>>;
+  validator?: (value: Value) => boolean;
+  errorMessage?: string;
+  required?: boolean;
+};
+
 /**
  * A cell with it's coordinates
  * @deprecated the component does not use cell descriptors anymore. Instead it passes cell point and cell value explicitly.
@@ -61,6 +70,8 @@ export type StoreState<Cell extends CellBase = CellBase> = {
   lastChanged: Point | null;
   bindings: PointMap<PointSet>;
   lastCommit: null | CellChange<Cell>[];
+  shiftKey: boolean;
+  ctrlKey: boolean;
 };
 
 /** Function for getting the cells the cell's value is bound to */
@@ -104,9 +115,19 @@ export type CellComponentProps<Cell extends CellBase = CellBase> = {
   setCellDimensions: (point: Point, dimensions: Dimensions) => void;
 };
 
+export type CellValidatorComponentProps<
+  Cell extends CellBaseValidator = CellBaseValidator
+> = CellComponentProps & {
+  data: Cell | undefined;
+};
+
 /** Type of the Spreadsheet Cell component */
 export type CellComponent<Cell extends CellBase = CellBase> =
   React.ComponentType<CellComponentProps<Cell>>;
+
+export type CellValidatorComponent<
+  Cell extends CellBaseValidator = CellBaseValidator
+> = React.ComponentType<CellComponentProps<Cell>>;
 
 type DataComponentProps<Cell extends CellBase> = {
   /** The rendered cell by the component */
@@ -173,6 +194,8 @@ export type RowIndicatorProps = {
   selected: boolean;
   /** Callback to select the entire row */
   onSelect: (row: number) => void;
+  /** Whether the user is dragging */
+  dragging: boolean;
 };
 
 /** Type of the RowIndicator component */
@@ -210,3 +233,13 @@ export type CommitChanges<Cell extends CellBase = CellBase> = Array<{
   prevCell: Cell | null;
   nextCell: Cell | null;
 }>;
+
+export type ItemSelectedProps = {
+  /** Selection for cell */
+  selection: Selection;
+  /** Whether the user is dragging */
+  dragging: boolean;
+};
+
+/** Type of the ItemSelected component */
+export type ItemSelectedComponent = React.ComponentType<ItemSelectedProps>;

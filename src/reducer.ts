@@ -4,6 +4,7 @@ import * as PointRange from "./point-range";
 import * as Matrix from "./matrix";
 import * as Types from "./types";
 import * as Point from "./point";
+import * as EntireRows from "./entire-rows";
 import * as Selection from "./selection";
 import { isActive } from "./util";
 import { createReducer } from "@reduxjs/toolkit";
@@ -23,6 +24,8 @@ export const INITIAL_STATE: Types.StoreState = {
   copied: PointMap.from([]),
   bindings: PointMap.from([]),
   lastCommit: null,
+  shiftKey: false,
+  ctrlKey: false,
 };
 
 const reducer = createReducer(INITIAL_STATE, (builder) => {
@@ -44,15 +47,42 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
       bindings: nextBindings,
     };
   });
-  builder.addCase(Actions.select, (state, action) => {
-    const { point } = action.payload;
-    if (state.active && !isActive(state.active, point)) {
-      return {
-        ...state,
-        selected: PointRange.create(point, state.active),
-        mode: "view",
-      };
+  // builder.addCase(Actions.select, (state, action) => {
+  //   const { point } = action.payload;
+  //   if (state.active && !isActive(state.active, point)) {
+  //     return {
+  //       ...state,
+  //       selected: PointRange.create(point, state.active),
+  //       mode: "view",
+  //     };
+  //   }
+  // });
+  builder.addCase(Actions.selectEntireRow, (state, action) => {
+    const { row } = action.payload;
+    const newRow = Selection.createEntireRows(row, row);
+    let active = { row: newRow.start, column: 0 };
+    let selection: Selection.EntireRows = newRow;
+
+    if (Selection.isEntireRows(state.selected) && state.active) {
+      console.log(
+        `state.dragging: ${state.dragging}, state.shiftKey: ${state.shiftKey}, state.ctrlKey: ${state.ctrlKey}`
+      );
+      if (
+        (state.ctrlKey && EntireRows.canMergeRows(newRow, state.selected)) ||
+        state.dragging ||
+        state.shiftKey
+      ) {
+        active = state.active;
+        selection = EntireRows.mergeEntireRows(newRow, state.selected);
+      }
     }
+
+    return {
+      ...state,
+      selected: selection,
+      active,
+      mode: "view",
+    };
   });
   builder.addCase(Actions.activate, (state, action) => {
     const { point } = action.payload;
@@ -190,9 +220,26 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
     const { event } = action.payload;
     const handler = getKeyDownHandler(state, event);
     if (handler) {
-      return { ...state, ...handler(state, event) };
+      return {
+        ...state,
+        ...handler(state, event),
+        shiftKey: event.shiftKey,
+        ctrlKey: event.ctrlKey || event.metaKey,
+      };
     }
-    return;
+    return {
+      ...state,
+      shiftKey: event.shiftKey,
+      ctrlKey: event.ctrlKey || event.metaKey,
+    };
+  });
+  builder.addCase(Actions.keyUp, (state, action) => {
+    const { event } = action.payload;
+    return {
+      ...state,
+      shiftKey: event.shiftKey,
+      ctrlKey: event.ctrlKey || event.metaKey,
+    };
   });
   builder.addCase(Actions.dragStart, (state, action) => {
     return { ...state, dragging: true };
@@ -208,7 +255,10 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
     (action) =>
       action.type === Actions.copy.type || action.type === Actions.cut.type,
     (state, action) => {
-      const selectedPoints = Selection.getPoints(state.selected, state.data);
+      const selectedPoints: Point.Point[] = Selection.getPoints(
+        state.selected,
+        state.data
+      );
       return {
         ...state,
         copied: selectedPoints.reduce((acc, point) => {
@@ -237,7 +287,10 @@ function clear(state: Types.StoreState): Types.StoreState | void {
   if (!state.active) {
     return;
   }
-  const selectedPoints = Selection.getPoints(state.selected, state.data);
+  const selectedPoints: Point.Point[] = Selection.getPoints(
+    state.selected,
+    state.data
+  );
   const changes = selectedPoints.map((point) => {
     const cell = Matrix.get(point, state.data);
     return {
@@ -309,7 +362,9 @@ const keyDownHandlers: KeyDownHandlers = {
   ArrowRight: go(0, +1),
   Tab: go(0, +1),
   Enter: edit,
-  Backspace: clear,
+  // Backspace: clear,
+  Backspace: edit,
+  Delete: clear,
   Escape: blur,
 };
 
@@ -363,8 +418,8 @@ const shiftKeyDownHandlers: KeyDownHandlers = {
   Tab: go(0, -1),
 };
 
-const shiftMetaKeyDownHandlers: KeyDownHandlers = {};
-const metaKeyDownHandlers: KeyDownHandlers = {};
+const shiftCtrlKeyDownHandlers: KeyDownHandlers = {};
+const ctrlKeyDownHandlers: KeyDownHandlers = {};
 
 export function getKeyDownHandler(
   state: Types.StoreState,
@@ -379,12 +434,12 @@ export function getKeyDownHandler(
     } else {
       handlers = editKeyDownHandlers;
     }
-  } else if (event.shiftKey && event.metaKey) {
-    handlers = shiftMetaKeyDownHandlers;
+  } else if (event.shiftKey && event.ctrlKey) {
+    handlers = shiftCtrlKeyDownHandlers;
   } else if (event.shiftKey) {
     handlers = shiftKeyDownHandlers;
-  } else if (event.metaKey) {
-    handlers = metaKeyDownHandlers;
+  } else if (event.ctrlKey) {
+    handlers = ctrlKeyDownHandlers;
   } else {
     handlers = keyDownHandlers;
   }

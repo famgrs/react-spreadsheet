@@ -44,7 +44,7 @@ import context from "./context";
 import "./Spreadsheet.css";
 
 /** The Spreadsheet component props */
-export type Props<CellType extends Types.CellBase> = {
+export type Props<CellType extends Types.CellBase | Types.CellBaseValidator> = {
   /** The spreadsheet's data */
   data: Matrix.Matrix<CellType>;
   /** Class to be added to the spreadsheet element */
@@ -90,7 +90,7 @@ export type Props<CellType extends Types.CellBase> = {
   /** The spreadsheet's header row component */
   HeaderRow?: Types.HeaderRowComponent;
   /** The Spreadsheet's cell component. */
-  Cell?: Types.CellComponent<CellType>;
+  Cell?: Types.CellComponent<CellType> | Types.CellValidatorComponent<CellType>;
   /** Component rendered for cells in view mode. */
   DataViewer?: Types.DataViewerComponent<CellType>;
   /** Component rendered for cells in edit mode. */
@@ -118,6 +118,7 @@ export type Props<CellType extends Types.CellBase> = {
     nextCell: null | CellType,
     coords: null | Point.Point
   ) => void;
+  selected?: Selection.Selection;
 };
 
 /**
@@ -171,7 +172,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
   const prevStateRef = React.useRef<Types.StoreState<CellType>>({
     ...INITIAL_STATE,
     data: props.data,
-    selected: null,
+    selected: props.selected || null,
     copied: PointMap.from([]),
     bindings: PointMap.from([]),
     lastCommit: null,
@@ -185,6 +186,10 @@ const Spreadsheet = <CellType extends Types.CellBase>(
   );
   const onKeyDownAction = React.useCallback(
     (event) => dispatch(Actions.keyDown(event)),
+    [dispatch]
+  );
+  const onKeyUpAction = React.useCallback(
+    (event) => dispatch(Actions.keyUp(event)),
     [dispatch]
   );
   const onKeyPress = React.useCallback(
@@ -508,6 +513,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
         })}
         onKeyPress={onKeyPress}
         onKeyDown={handleKeyDown}
+        onKeyUp={onKeyUpAction}
         onMouseMove={handleMouseMove}
         onBlur={handleBlur}
       >
@@ -521,6 +527,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       className,
       darkMode,
       onKeyPress,
+      onKeyUpAction,
       handleKeyDown,
       handleMouseMove,
       handleBlur,
