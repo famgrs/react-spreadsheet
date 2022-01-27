@@ -64,16 +64,14 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
     let selection: Selection.EntireRows = newRow;
 
     if (Selection.isEntireRows(state.selected) && state.active) {
-      console.log(
-        `state.dragging: ${state.dragging}, state.shiftKey: ${state.shiftKey}, state.ctrlKey: ${state.ctrlKey}`
-      );
-      if (
-        (state.ctrlKey && EntireRows.canMergeRows(newRow, state.selected)) ||
-        state.dragging ||
-        state.shiftKey
-      ) {
+      if (state.dragging || state.shiftKey) {
         active = state.active;
-        selection = EntireRows.mergeEntireRows(newRow, state.selected);
+        selection = EntireRows.mergeEntireRows(state.selected, newRow, active);
+      } else if (
+        state.ctrlKey &&
+        EntireRows.canMergeRows(state.selected, newRow)
+      ) {
+        selection = EntireRows.mergeEntireRows(state.selected, newRow, null);
       }
     }
 

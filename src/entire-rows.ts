@@ -1,3 +1,4 @@
+import * as Point from "./point";
 import * as Selection from "./selection";
 
 export function checkIfNeighborRows(
@@ -32,10 +33,20 @@ export function canMergeRows(
 }
 
 export function mergeEntireRows(
-  selection1: Selection.EntireRows,
-  selection2: Selection.EntireRows
+  oldRow: Selection.EntireRows,
+  newRow: Selection.EntireRows,
+  active: Point.Point | null
 ): Selection.EntireRows {
-  const minRow = Math.min(selection1.start, selection2.start);
-  const maxRow = Math.max(selection1.end, selection2.end);
+  let minRow;
+  let maxRow;
+
+  if (!active) {
+    minRow = Math.min(oldRow.start, newRow.start);
+    maxRow = Math.max(oldRow.end, newRow.end);
+  } else {
+    minRow = Math.min(newRow.start, newRow.end, active.row);
+    maxRow = Math.max(newRow.start, newRow.end, active.row);
+  }
+
   return Selection.createEntireRows(minRow, maxRow);
 }
