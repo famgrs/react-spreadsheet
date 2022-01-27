@@ -72,6 +72,7 @@ export type StoreState<Cell extends CellBase = CellBase> = {
   lastCommit: null | CellChange<Cell>[];
   shiftKey: boolean;
   ctrlKey: boolean;
+  readonly?: boolean;
 };
 
 /** Function for getting the cells the cell's value is bound to */
