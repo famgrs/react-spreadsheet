@@ -18,7 +18,7 @@ const MOCK_ACTIVATE = jest.fn();
 const MOCK_SET_CELL_DIMENSIONS = jest.fn();
 const EXAMPLE_ROW = 0;
 const EXAMPLE_COLUMN = 0;
-const EXAMPLE_PROPS: Types.CellComponentProps = {
+const EXAMPLE_PROPS: Types.CellValidatorComponentProps = {
   row: EXAMPLE_ROW,
   column: EXAMPLE_COLUMN,
   DataViewer: MOCK_DATA_VIEWER,

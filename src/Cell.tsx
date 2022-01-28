@@ -11,7 +11,7 @@ import { isActive, getOffsetRect } from "./util";
 import useDispatch from "./use-dispatch";
 import useSelector from "./use-selector";
 
-export const Cell: React.FC<Types.CellComponentProps> = ({
+export const Cell: React.FC<Types.CellValidatorComponentProps> = ({
   row,
   column,
   DataViewer,
@@ -96,10 +96,10 @@ export const Cell: React.FC<Types.CellComponentProps> = ({
 };
 
 export const enhance = (
-  CellComponent: React.ComponentType<Types.CellComponentProps>
+  CellComponent: React.ComponentType<Types.CellValidatorComponentProps>
 ): React.FC<
   Omit<
-    Types.CellComponentProps,
+    Types.CellValidatorComponentProps,
     | "selected"
     | "active"
     | "copied"

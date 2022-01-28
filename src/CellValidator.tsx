@@ -1,15 +1,8 @@
 import * as React from "react";
 import classnames from "classnames";
-import * as PointSet from "./point-set";
-import * as PointMap from "./point-map";
-import * as Matrix from "./matrix";
 import * as Types from "./types";
 import * as Point from "./point";
-import * as Actions from "./actions";
-import * as Selection from "./selection";
-import { isActive, getOffsetRect } from "./util";
-import useDispatch from "./use-dispatch";
-import useSelector from "./use-selector";
+import { getOffsetRect } from "./util";
 
 export const CellValidator: React.FC<Types.CellValidatorComponentProps> = ({
   row,
@@ -103,84 +96,4 @@ export const CellValidator: React.FC<Types.CellValidatorComponentProps> = ({
       />
     </td>
   );
-};
-
-export const enhance = (
-  CellValidatorComponent: React.ComponentType<Types.CellValidatorComponentProps>
-): React.FC<
-  Omit<
-    Types.CellValidatorComponentProps,
-    | "selected"
-    | "active"
-    | "copied"
-    | "dragging"
-    | "mode"
-    | "data"
-    | "select"
-    | "activate"
-    | "setCellDimensions"
-  >
-> => {
-  return function CellWrapper(props) {
-    const { row, column } = props;
-    const dispatch = useDispatch();
-    const select = React.useCallback(
-      (point: Point.Point) => dispatch(Actions.select(point)),
-      [dispatch]
-    );
-    const activate = React.useCallback(
-      (point: Point.Point) => dispatch(Actions.activate(point)),
-      [dispatch]
-    );
-    const setCellDimensions = React.useCallback(
-      (point: Point.Point, dimensions: Types.Dimensions) =>
-        dispatch(Actions.setCellDimensions(point, dimensions)),
-      [dispatch]
-    );
-    const active = useSelector((state) =>
-      isActive(state.active, {
-        row,
-        column,
-      })
-    );
-    const mode = useSelector((state) => (active ? state.mode : "view"));
-    const data = useSelector((state) =>
-      Matrix.get({ row, column }, state.data)
-    );
-    const selected = useSelector((state) =>
-      Selection.hasPoint(state.selected, state.data, { row, column })
-    );
-    const dragging = useSelector((state) => state.dragging);
-    const copied = useSelector((state) =>
-      PointMap.has({ row, column }, state.copied)
-    );
-    const readOnly = useSelector((state) => state.readOnly);
-
-    // Use only to trigger re-render when cell bindings change
-    useSelector((state) => {
-      const point = { row, column };
-      const cellBindings = PointMap.get(point, state.bindings);
-      return cellBindings &&
-        state.lastChanged &&
-        PointSet.has(cellBindings, state.lastChanged)
-        ? {}
-        : null;
-    });
-
-    return (
-      <CellValidatorComponent
-        {...props}
-        selected={selected}
-        active={active}
-        copied={copied}
-        dragging={dragging}
-        mode={mode}
-        data={data}
-        select={select}
-        activate={activate}
-        setCellDimensions={setCellDimensions}
-        readOnly={readOnly}
-      />
-    );
-  };
 };
