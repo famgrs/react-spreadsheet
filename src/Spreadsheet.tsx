@@ -218,10 +218,10 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     (data) => dispatch(Actions.setData(data)),
     [dispatch]
   );
-  const setSelected = React.useCallback(
-    (data) => dispatch(Actions.setSelected(data)),
-    [dispatch]
-  );
+  // const setSelected = React.useCallback(
+  //   (data) => dispatch(Actions.setSelected(data)),
+  //   [dispatch]
+  // );
   const blur = React.useCallback(() => dispatch(Actions.blur()), [dispatch]);
 
   React.useEffect(() => {
@@ -282,12 +282,12 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     }
   }, [props.data, setData]);
 
-  React.useEffect(() => {
-    const prevState = prevStateRef.current;
-    if (props.selected && props.selected !== prevState.selected) {
-      setSelected(props.selected);
-    }
-  }, [props.selected, setSelected]);
+  // React.useEffect(() => {
+  //   const prevState = prevStateRef.current;
+  //   if (props.selected && props.selected !== prevState.selected) {
+  //     setSelected(props.selected);
+  //   }
+  // }, [props.selected, setSelected]);
 
   const clip = React.useCallback(
     (event: ClipboardEvent): void => {
