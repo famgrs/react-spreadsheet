@@ -82,7 +82,12 @@ export const DarkModeCellValidator: Story<Props<StringCellValidator>> = (
 ) => <Spreadsheet {...props} darkMode data={DATA_2} Cell={CellValidator} />;
 
 export const Controlled: Story<Props<StringCell>> = (props) => {
-  const [data, setData] = React.useState(EMPTY_DATA);
+  const wrapperRef = React.useRef(null);
+  const [data, setData] = React.useState(
+    EMPTY_DATA.map((arr, i) =>
+      Array.from(arr).map((_, j) => ({ value: `${i + 1}${j + 1}` }))
+    )
+  );
 
   const addColumn = React.useCallback(
     () =>
@@ -120,15 +125,21 @@ export const Controlled: Story<Props<StringCell>> = (props) => {
   }, [setData]);
 
   return (
-    <>
+    <div ref={wrapperRef}>
       <div>
         <button onClick={addColumn}>Add column</button>
         <button onClick={addRow}>Add row</button>
         <button onClick={removeColumn}>Remove column</button>
         <button onClick={removeRow}>Remove row</button>
       </div>
-      <Spreadsheet {...props} onChange={setData} />
-    </>
+      <Spreadsheet
+        {...props}
+        parentRef={wrapperRef}
+        data={data}
+        // @ts-ignore
+        onChange={setData}
+      />
+    </div>
   );
 };
 
