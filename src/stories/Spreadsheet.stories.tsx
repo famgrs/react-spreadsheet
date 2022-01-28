@@ -24,18 +24,17 @@ const INITIAL_ROWS = 6;
 const INITIAL_COLUMNS = 4;
 const EMPTY_DATA = createEmptyMatrix<StringCell>(INITIAL_ROWS, INITIAL_COLUMNS);
 const DATA_2 = [
-  [{ value: "" }, { value: "" }, { value: "" }],
+  [{ value: "", required: true }, { value: "" }, { value: "" }],
   [
-    { value: "" },
+    { value: "", required: true },
     {
       value: "fix misspelll",
       validator: (it: string | undefined) => it === "fix misspell",
       errorMessage: "The field is invalid",
-      required: true,
     },
     { value: "" },
   ],
-  [{ value: "" }, { value: "" }, { value: "" }],
+  [{ value: "", required: true }, { value: "" }, { value: "" }],
 ];
 
 export default {

@@ -52,6 +52,9 @@ const ActiveCell: React.FC<Props> = (props) => {
     if (cell?.validator) {
       return !cell.validator(cell?.value);
     }
+    if (cell?.required) {
+      return ![null, undefined, ""].includes(cell?.value);
+    }
     return false;
   }, [cell]);
   const isEmpty = React.useMemo((): boolean => {
