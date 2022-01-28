@@ -108,7 +108,7 @@ export type Props<CellType extends Types.CellBase | Types.CellBaseValidator> = {
   /** Callback called when the Spreadsheet's edit mode changes. */
   onModeChange?: (mode: Types.Mode) => void;
   /** Callback called when the Spreadsheet's selection changes. */
-  onSelect?: (selected: Point.Point[]) => void;
+  onSelect?: (selected: Point.Point[], selection: Selection.Selection) => void;
   /** Callback called when Spreadsheet's active cell changes. */
   onActivate?: (active: Point.Point) => void;
   /** Callback called when the Spreadsheet loses focus */
@@ -119,6 +119,8 @@ export type Props<CellType extends Types.CellBase | Types.CellBaseValidator> = {
     coords: null | Point.Point
   ) => void;
   selected?: Selection.Selection;
+  readOnly?: boolean;
+  parentRef?: React.RefObject<any>;
 };
 
 /**
@@ -153,9 +155,16 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       ({
         ...INITIAL_STATE,
         data: props.data,
+        // selected: props.selected || null,
+        readOnly: props.readOnly || false,
       } as Types.StoreState<CellType>),
-    [props.data]
+    [
+      props.data,
+      // props.selected,
+      props.readOnly,
+    ]
   );
+
   const reducerElements = React.useReducer(
     reducer as unknown as React.Reducer<Types.StoreState<CellType>, any>,
     initialState
@@ -173,6 +182,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     ...INITIAL_STATE,
     data: props.data,
     selected: props.selected || null,
+    readOnly: props.readOnly || false,
     copied: PointMap.from([]),
     bindings: PointMap.from([]),
     lastCommit: null,
@@ -208,6 +218,10 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     (data) => dispatch(Actions.setData(data)),
     [dispatch]
   );
+  const setSelected = React.useCallback(
+    (data) => dispatch(Actions.setSelected(data)),
+    [dispatch]
+  );
   const blur = React.useCallback(() => dispatch(Actions.blur()), [dispatch]);
 
   React.useEffect(() => {
@@ -227,7 +241,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
 
     if (state.selected !== prevState.selected) {
       const points = Selection.getPoints(state.selected, state.data);
-      onSelect(points);
+      onSelect(points, state.selected);
     }
 
     if (state.mode !== prevState.mode) {
@@ -238,7 +252,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       if (state.active) {
         onActivate(state.active);
       } else {
-        const root = rootRef.current;
+        const root = props.parentRef?.current || rootRef.current;
         if (root && isFocusedWithin(root) && document.activeElement) {
           (document.activeElement as HTMLElement).blur();
         }
@@ -249,6 +263,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     prevStateRef.current = state;
   }, [
     props.data,
+    props.parentRef,
     state,
     onActivate,
     onBlur,
@@ -266,6 +281,13 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       setData(props.data);
     }
   }, [props.data, setData]);
+
+  React.useEffect(() => {
+    const prevState = prevStateRef.current;
+    if (props.selected && props.selected !== prevState.selected) {
+      setSelected(props.selected);
+    }
+  }, [props.selected, setSelected]);
 
   const clip = React.useCallback(
     (event: ClipboardEvent): void => {
@@ -351,12 +373,12 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     (event) => {
       const { currentTarget } = event;
       setTimeout(() => {
-        if (!isFocusedWithin(currentTarget)) {
+        if (!isFocusedWithin(props.parentRef?.current || currentTarget)) {
           blur();
         }
       }, 0);
     },
-    [blur]
+    [blur, props.parentRef]
   );
 
   const formulaParser = React.useMemo(() => {

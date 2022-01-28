@@ -8,6 +8,7 @@ import Spreadsheet, { Props } from "./Spreadsheet";
 import * as Matrix from "./matrix";
 import * as Types from "./types";
 import * as Point from "./point";
+import * as PointRange from "./point-range";
 import { createEmptyMatrix } from "./util";
 
 type Value = string;
@@ -96,7 +97,10 @@ describe("<Spreadsheet />", () => {
     expect(onActivate).toHaveBeenCalledWith(Point.ORIGIN);
     // Check onSelect is called
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith([Point.ORIGIN]);
+    expect(onSelect).toHaveBeenCalledWith(
+      [Point.ORIGIN],
+      PointRange.create(Point.ORIGIN, Point.ORIGIN)
+    );
   });
   test("pressing Enter when a cell is active enters to edit mode", () => {
     const onModeChange = jest.fn();
@@ -230,7 +234,10 @@ describe("<Spreadsheet />", () => {
     });
     fireEvent.mouseDown(thirdCell);
     expect(onSelect).toBeCalledTimes(1);
-    expect(onSelect).toBeCalledWith([{ row: 1, column: 1 }]);
+    expect(onSelect).toBeCalledWith(
+      [{ row: 1, column: 1 }],
+      PointRange.create({ row: 1, column: 1 }, { row: 1, column: 1 })
+    );
 
     fireEvent.mouseDown(firstCell);
     onSelect.mockClear();
@@ -241,7 +248,10 @@ describe("<Spreadsheet />", () => {
     });
     fireEvent.mouseDown(thirdCell);
     expect(onSelect).toBeCalledTimes(1);
-    expect(onSelect).toBeCalledWith([{ row: 1, column: 1 }]);
+    expect(onSelect).toBeCalledWith(
+      [{ row: 1, column: 1 }],
+      PointRange.create({ row: 1, column: 1 }, { row: 1, column: 1 })
+    );
 
     fireEvent.mouseDown(firstCell);
     onSelect.mockClear();
@@ -252,7 +262,10 @@ describe("<Spreadsheet />", () => {
     });
     fireEvent.mouseDown(thirdCell);
     expect(onSelect).toBeCalledTimes(1);
-    expect(onSelect).toBeCalledWith([{ row: 1, column: 1 }]);
+    expect(onSelect).toBeCalledWith(
+      [{ row: 1, column: 1 }],
+      PointRange.create({ row: 1, column: 1 }, { row: 1, column: 1 })
+    );
   });
   test("setting row labels changes row indicators labels", () => {
     const EXAMPLE_ROW_LABELS = ["A", "B", "C", "D"];

@@ -72,7 +72,7 @@ export type StoreState<Cell extends CellBase = CellBase> = {
   lastCommit: null | CellChange<Cell>[];
   shiftKey: boolean;
   ctrlKey: boolean;
-  readonly?: boolean;
+  readOnly?: boolean;
 };
 
 /** Function for getting the cells the cell's value is bound to */
@@ -114,6 +114,7 @@ export type CellComponentProps<Cell extends CellBase = CellBase> = {
   activate: (point: Point) => void;
   /** Set the dimensions of the cell at the given point with the given dimensions */
   setCellDimensions: (point: Point, dimensions: Dimensions) => void;
+  readOnly?: boolean;
 };
 
 export type CellValidatorComponentProps<

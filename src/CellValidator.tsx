@@ -24,6 +24,7 @@ export const CellValidator: React.FC<Types.CellValidatorComponentProps> = ({
   select,
   activate,
   setCellDimensions,
+  readOnly,
 }): React.ReactElement => {
   const rootRef = React.useRef<HTMLTableCellElement | null>(null);
   const point = React.useMemo(
@@ -88,7 +89,7 @@ export const CellValidator: React.FC<Types.CellValidatorComponentProps> = ({
       ref={rootRef}
       className={classnames("Spreadsheet__cell", data?.className, {
         "Spreadsheet__cell--invalid": invalid,
-        "Spreadsheet__cell--readonly": data?.readOnly,
+        "Spreadsheet__cell--readonly": data?.readOnly || readOnly,
       })}
       onMouseOver={handleMouseOver}
       onMouseDown={handleMouseDown}
@@ -153,6 +154,7 @@ export const enhance = (
     const copied = useSelector((state) =>
       PointMap.has({ row, column }, state.copied)
     );
+    const readOnly = useSelector((state) => state.readOnly);
 
     // Use only to trigger re-render when cell bindings change
     useSelector((state) => {
@@ -177,6 +179,7 @@ export const enhance = (
         select={select}
         activate={activate}
         setCellDimensions={setCellDimensions}
+        readOnly={readOnly}
       />
     );
   };

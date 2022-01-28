@@ -94,7 +94,7 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
   builder.addCase(Actions.setCellData, (state, action) => {
     const { active, data: cellData, getBindingsForCell } = action.payload;
     const bindings = getBindingsForCell(cellData, state.data);
-    if (state.readonly || isActiveReadOnly(state)) {
+    if (state.readOnly || isActiveReadOnly(state)) {
       return;
     }
     return {
@@ -134,7 +134,7 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
   builder.addCase(Actions.paste, (state, action) => {
     const { data: text } = action.payload;
     const { active } = state;
-    if (!active || state.readonly) {
+    if (!active || state.readOnly) {
       return;
     }
     const copiedMatrix = Matrix.split(text, (value) => ({ value }));
@@ -275,14 +275,14 @@ export default reducer;
 // Shared reducers
 
 function edit(state: Types.StoreState): Types.StoreState | void {
-  if (state.readonly || isActiveReadOnly(state)) {
+  if (state.readOnly || isActiveReadOnly(state)) {
     return;
   }
   return { ...state, mode: "edit" };
 }
 
 function clear(state: Types.StoreState): Types.StoreState | void {
-  if (state.readonly || !state.active) {
+  if (state.readOnly || !state.active) {
     return;
   }
   const selectedPoints: Point.Point[] = Selection.getPoints(
