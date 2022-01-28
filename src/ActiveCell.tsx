@@ -48,21 +48,22 @@ const ActiveCell: React.FC<Props> = (props) => {
     () => !active || !dimensions,
     [active, dimensions]
   );
-  const isInvalid = React.useMemo((): boolean => {
-    if (cell?.validator) {
-      return !cell.validator(cell?.value);
-    }
-    if (cell?.required) {
-      return ![null, undefined, ""].includes(cell?.value);
-    }
-    return false;
-  }, [cell]);
   const isEmpty = React.useMemo((): boolean => {
     if (cell?.required) {
       return [null, undefined, ""].includes(cell?.value);
     }
     return false;
   }, [cell]);
+  const isInvalid = React.useMemo((): boolean => {
+    if (cell?.validator) {
+      return !cell.validator(cell?.value);
+    }
+    if (cell?.required) {
+      return isEmpty;
+    }
+    return false;
+  }, [cell, isEmpty]);
+  console.log("active cell", isEmpty, isInvalid);
 
   const initialCellRef = React.useRef<Types.CellBaseValidator | undefined>(
     undefined
@@ -131,9 +132,7 @@ const ActiveCell: React.FC<Props> = (props) => {
   return hidden ? null : (
     <div
       ref={rootRef}
-      className={classnames("Spreadsheet__active-cell-wrapper", {
-        "Spreadsheet__active-cell-wrapper--invalid": isInvalid,
-      })}
+      className={classnames("Spreadsheet__active-cell-wrapper", {})}
       style={
         active && isInvalid
           ? {

@@ -26,7 +26,7 @@ const EMPTY_DATA = createEmptyMatrix<StringCell>(INITIAL_ROWS, INITIAL_COLUMNS);
 const DATA_2 = [
   [{ value: "", required: true }, { value: "" }, { value: "" }],
   [
-    { value: "", required: true },
+    { value: "test", required: true },
     {
       value: "fix misspelll",
       validator: (it: string | undefined) => it === "fix misspell",
