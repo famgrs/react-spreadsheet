@@ -63,7 +63,6 @@ const ActiveCell: React.FC<Props> = (props) => {
     }
     return false;
   }, [cell, isEmpty]);
-  console.log("active cell", isEmpty, isInvalid);
 
   const initialCellRef = React.useRef<Types.CellBaseValidator | undefined>(
     undefined
@@ -181,7 +180,7 @@ const ActiveCell: React.FC<Props> = (props) => {
 
       {active && (isInvalid || isEmpty) && (
         <div className="Spreadsheet__active-cell-error">
-          {isEmpty && cell?.required ? (
+          {isEmpty && isInvalid && cell?.required ? (
             <div className="Spreadsheet__active-cell-error-item">
               Campo obrigatório
             </div>
