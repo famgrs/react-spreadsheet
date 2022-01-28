@@ -148,7 +148,6 @@ export const Controlled: Story<Props<StringCell>> = (props) => {
 //   const [selected, setSelected] = React.useState(createEntireRows(1, 2));
 
 //   const handleSelect = (points: any, selection: any) => {
-//     console.log("handleSelect", selection);
 //     // setSelected(selection);
 //   };
 

@@ -226,18 +226,6 @@ export function normalizeEntireRows(
   data: Matrix.Matrix<unknown>
 ): EntireRows {
   const count = Matrix.getRowsCount(data);
-  console.log("data", data);
-  console.log(
-    "normalizeEntireRows",
-    `{
-    start: Math.max(${selection.start}, ${0}),
-    end: Math.min(${selection.end}, ${count - 1})
-  }`,
-    {
-      start: Math.max(selection.start, 0),
-      end: Math.min(selection.end, count - 1),
-    }
-  );
   return createEntireRows(
     Math.max(selection.start, 0),
     Math.min(selection.end, count - 1)
