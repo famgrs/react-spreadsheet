@@ -249,10 +249,12 @@ const Spreadsheet = <CellType extends Types.CellBase>(
     }
 
     if (state.active !== prevState.active) {
+      console.log("if state.active !== prevState.active");
       if (state.active) {
         onActivate(state.active);
       } else {
         const root = props.parentRef?.current || rootRef.current;
+        console.log("isFocusedWithin", isFocusedWithin(root));
         if (root && isFocusedWithin(root) && document.activeElement) {
           (document.activeElement as HTMLElement).blur();
         }

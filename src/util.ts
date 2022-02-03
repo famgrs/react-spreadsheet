@@ -272,6 +272,7 @@ export function isFocusedWithin(element: Element): boolean {
   try {
     return element.matches(FOCUS_WITHIN_SELECTOR);
   } catch (e) {
+    console.log("deu ruim :focus-within");
     return element.contains(document.activeElement);
   }
 }
