@@ -250,6 +250,9 @@ const Spreadsheet = <CellType extends Types.CellBase>(
 
     if (state.active !== prevState.active) {
       console.log("if state.active !== prevState.active");
+      console.log("state.active", state.active);
+      console.log("prevState.active", prevState.active);
+      console.log("state.selected", state.selected);
       if (state.active) {
         onActivate(state.active);
       } else {
