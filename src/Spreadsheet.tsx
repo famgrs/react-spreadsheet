@@ -252,7 +252,7 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       if (state.active) {
         onActivate(state.active);
       } else {
-        console.log("chamando onBlur", state.active);
+        console.log("chamando onBlur", props.parentRef?.current);
         const root = props.parentRef?.current || rootRef.current;
         if (root && isFocusedWithin(root) && document.activeElement) {
           (document.activeElement as HTMLElement).blur();
