@@ -270,8 +270,6 @@ export function shouldHandleClipboardEvent(
 
 export function isFocusedWithin(element: Element): boolean {
   try {
-    console.log("element", element);
-    console.log("document.activeElement", document.activeElement);
     console.log("contains", element.contains(document.activeElement));
     console.log("matches", element.matches(FOCUS_WITHIN_SELECTOR));
     return element.matches(FOCUS_WITHIN_SELECTOR);
