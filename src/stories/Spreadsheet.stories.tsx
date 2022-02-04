@@ -179,9 +179,23 @@ export const ReadonlyData: Story<Props<StringCell>> = (props) => {
 };
 
 export const ReadonlySpreadsheet: Story<Props<StringCell>> = (props) => {
-  const data = createEmptyMatrix<StringCell>(INITIAL_ROWS, INITIAL_COLUMNS);
-  data[0][0] = { value: "Read Only" };
-  return <Spreadsheet {...props} data={data} readOnly />;
+  const data = createEmptyMatrix<StringCell>(INITIAL_ROWS, INITIAL_COLUMNS).map(
+    (row, i) => Array.from(row).map((cell, j) => ({ value: `${i}${j}` }))
+  );
+
+  const handleSelect = (points: any, selection: any) => {
+    console.log("handleSelect", selection);
+  };
+
+  return (
+    <Spreadsheet
+      {...props}
+      data={data}
+      onSelect={handleSelect}
+      Cell={CellValidator}
+      readOnly
+    />
+  );
 };
 
 export const WithAsyncCellData: Story<Props<StringCell>> = (props) => {

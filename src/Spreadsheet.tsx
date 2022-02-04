@@ -241,8 +241,6 @@ const Spreadsheet = <CellType extends Types.CellBase>(
 
     if (state.selected !== prevState.selected) {
       const points = Selection.getPoints(state.selected, state.data);
-      console.log("antes", prevState.selected);
-      console.log("depois", state.selected);
       onSelect(points, state.selected);
     }
 
@@ -254,7 +252,6 @@ const Spreadsheet = <CellType extends Types.CellBase>(
       if (state.active) {
         onActivate(state.active);
       } else {
-        console.log("perdi state.active");
         const root = props.parentRef?.current || rootRef.current;
         if (root && isFocusedWithin(root) && document.activeElement) {
           (document.activeElement as HTMLElement).blur();
