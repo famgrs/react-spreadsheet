@@ -33,7 +33,7 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
     const { data } = action.payload;
     const nextActive =
       state.active && Matrix.has(state.active, data) ? state.active : null;
-    const nextSelected = Selection.normalize(state.selected, data);
+    // const nextSelected = Selection.normalize(state.selected, data);
     const nextBindings = PointMap.map(
       (bindings) =>
         PointSet.filter((point) => Matrix.has(point, data), bindings),
@@ -43,7 +43,8 @@ const reducer = createReducer(INITIAL_STATE, (builder) => {
       ...state,
       data,
       active: nextActive,
-      selected: nextSelected,
+      // selected: nextSelected,
+      selected: null,
       bindings: nextBindings,
     };
   });
