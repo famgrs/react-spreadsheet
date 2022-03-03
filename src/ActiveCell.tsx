@@ -125,6 +125,23 @@ const ActiveCell: React.FC<Props> = (props) => {
     }
   });
 
+  React.useEffect(() => {
+    const prevActive = prevActiveRef.current;
+
+    if (!prevActive) {
+      return;
+    }
+
+    const coordsChanged =
+      active?.row !== prevActive.row || active?.column !== prevActive.column;
+    const exitedEditMode = mode !== "edit";
+
+    if (coordsChanged || exitedEditMode) {
+      console.log("SET CELL DATA", cell?.parser?.(cell.value));
+      cell?.parser && setCellData(prevActive, cell.parser(cell.value));
+    }
+  }, [prevActiveRef, cell, setCellData, active, mode]);
+
   const DataEditor = (cell && cell.DataEditor) || props.DataEditor;
   const readOnly = cell && cell.readOnly;
 
