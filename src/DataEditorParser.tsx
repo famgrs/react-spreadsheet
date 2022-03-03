@@ -17,6 +17,15 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
     [onChange, cell]
   );
 
+  const handleBlur = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("DataEditorParser blur", cell);
+      const value = event.target.value;
+      onChange({ ...cell, value: cell?.parser?.(value) || value });
+    },
+    [onChange, cell]
+  );
+
   React.useEffect(() => {
     if (inputRef.current) {
       moveCursorToEnd(inputRef.current);
@@ -31,6 +40,7 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
         ref={inputRef}
         type="text"
         onChange={handleChange}
+        onBlur={handleBlur}
         value={value}
         autoFocus
       />
