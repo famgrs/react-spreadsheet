@@ -2,9 +2,10 @@ import Spreadsheet from "./Spreadsheet";
 import { CellValidator } from "./CellValidator";
 import DataEditor from "./DataEditor";
 import DataViewer from "./DataViewer";
+import DataEditorParser from "./DataEditorParser";
 
 export default Spreadsheet;
-export { Spreadsheet, CellValidator, DataEditor, DataViewer };
+export { Spreadsheet, CellValidator, DataEditor, DataViewer, DataEditorParser };
 export type { Props } from "./Spreadsheet";
 export { getComputedValue } from "./util";
 export { Matrix, createEmpty as createEmptyMatrix } from "./matrix";
