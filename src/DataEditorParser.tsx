@@ -17,6 +17,7 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
 
   const handleBlur = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("blur cell", cell);
       cell?.parser &&
         onChange({
           ...cell,
