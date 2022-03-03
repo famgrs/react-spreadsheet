@@ -371,7 +371,6 @@ const Spreadsheet = <CellType extends Types.CellBase>(
 
   const handleBlur = React.useCallback(
     (event) => {
-      console.log("Spreadsheet blur");
       const { currentTarget } = event;
       setTimeout(() => {
         if (!isFocusedWithin(props.parentRef?.current || currentTarget)) {
