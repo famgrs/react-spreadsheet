@@ -128,8 +128,6 @@ const ActiveCell: React.FC<Props> = (props) => {
   React.useEffect(() => {
     const prevActive = prevActiveRef.current;
     const prevCell = prevCellRef.current;
-    prevActiveRef.current = active;
-    prevCellRef.current = cell;
 
     if (!prevActive || !prevCell) {
       return;
