@@ -25,6 +25,7 @@ export type CellBaseValidator<Value = any> = CellBase & {
   DataEditor?: DataEditorComponent<CellBaseValidator<Value>>;
   DataViewer?: DataViewerComponent<CellBaseValidator<Value>>;
   validator?: (value: Value) => boolean;
+  parser?: (value: Value) => boolean;
   errorMessage?: string;
   required?: boolean;
 };
@@ -155,6 +156,16 @@ export type DataEditorProps<Cell extends CellBase = CellBase> =
     /** Callback to be called when edit mode should be exited */
     exitEditMode: () => void;
   };
+
+/** Type of the Spreadsheet DataEditor component props */
+export type DataEditorParserProps<
+  Cell extends CellBaseValidator = CellBaseValidator
+> = DataComponentProps<Cell> & {
+  /** Callback to be called when the cell's value is changed */
+  onChange: (cell: Cell) => void;
+  /** Callback to be called when edit mode should be exited */
+  exitEditMode: () => void;
+};
 
 /** Type of the Spreadsheet DataEditor component */
 export type DataEditorComponent<Cell extends CellBase = CellBase> =
