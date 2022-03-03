@@ -82,26 +82,6 @@ const ActiveCell: React.FC<Props> = (props) => {
     [setCellData, active]
   );
 
-  const handleEditMode = React.useCallback(() => {
-    const prevActive = prevActiveRef.current;
-    const prevCell = prevCellRef.current;
-
-    if (!prevActive || !prevCell) {
-      return;
-    }
-
-    const coordsChanged =
-      active?.row !== prevActive.row || active?.column !== prevActive.column;
-    const exitedEditMode = mode !== "edit";
-
-    if (coordsChanged || exitedEditMode) {
-      console.log("SET CELL DATA", cell?.parser?.(cell.value));
-      cell?.parser && setCellData(prevActive, cell.parser(cell.value));
-    }
-
-    view();
-  }, [prevActiveRef, cell, setCellData, active, mode, view]);
-
   React.useEffect(() => {
     const root = rootRef.current;
     if (!hidden && root) {
@@ -144,6 +124,28 @@ const ActiveCell: React.FC<Props> = (props) => {
       initialCellRef.current = cell;
     }
   });
+
+  React.useEffect(() => {
+    const prevActive = prevActiveRef.current;
+    const prevCell = prevCellRef.current;
+    prevActiveRef.current = active;
+    prevCellRef.current = cell;
+
+    if (!prevActive || !prevCell) {
+      return;
+    }
+
+    // Commit
+    const coordsChanged =
+      active?.row !== prevActive.row || active?.column !== prevActive.column;
+    const exitedEditMode = mode !== "edit";
+
+    console.log("use effect active", active, coordsChanged, mode);
+    if (!active && (coordsChanged || exitedEditMode)) {
+      console.log("SET CELL DATA not active", cell?.parser?.(cell.value));
+      cell?.parser && setCellData(prevActive, cell.parser(cell.value));
+    }
+  }, [prevActiveRef, prevCellRef, active, cell, setCellData, mode]);
 
   const DataEditor = (cell && cell.DataEditor) || props.DataEditor;
   const readOnly = cell && cell.readOnly;
@@ -193,7 +195,7 @@ const ActiveCell: React.FC<Props> = (props) => {
             cell={cell}
             // @ts-ignore
             onChange={handleChange}
-            exitEditMode={handleEditMode}
+            exitEditMode={view}
           />
         )}
       </div>
