@@ -10,6 +10,7 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
 
   const handleChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("handle change cell", cell);
       const value = event.target.value;
       onChange({ ...cell, value: cell?.parser?.(value) || value });
     },
