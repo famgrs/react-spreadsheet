@@ -139,7 +139,7 @@ const ActiveCell: React.FC<Props> = (props) => {
     const exitedEditMode = mode !== "edit";
 
     console.log("use effect active", active, coordsChanged, mode);
-    if (!active && (coordsChanged || exitedEditMode)) {
+    if (coordsChanged && exitedEditMode) {
       console.log("SET CELL DATA not active", cell?.parser?.(cell.value));
       cell?.parser && setCellData(prevActive, cell.parser(cell.value));
     }
