@@ -8,19 +8,6 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
 }) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const checkValid = React.useCallback(
-    (value: any): boolean => {
-      if (cell?.validator) {
-        return !cell.validator(value);
-      }
-      if (cell?.required) {
-        return [null, undefined, ""].includes(value);
-      }
-      return false;
-    },
-    [cell]
-  );
-
   const handleChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange({ ...cell, value: event.target.value });
@@ -30,12 +17,13 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
 
   const handleBlur = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      console.log("handle blur input - DataEditorParser", event.target.value);
-      if (cell?.parser && checkValid(event.target.value)) {
-        cell?.parser?.(event.target.value);
-      }
+      cell?.parser &&
+        onChange({
+          ...cell,
+          value: cell.parser?.(event.target.value),
+        });
     },
-    [checkValid, cell]
+    [onChange, cell]
   );
 
   React.useEffect(() => {
