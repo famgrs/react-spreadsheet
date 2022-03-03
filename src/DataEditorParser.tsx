@@ -30,6 +30,7 @@ const DataEditor: React.FC<Types.DataEditorParserProps> = ({
 
   const handleBlur = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("handle blur input - DataEditorParser", event.target.value);
       if (cell?.parser && checkValid(event.target.value)) {
         cell?.parser?.(event.target.value);
       }
