@@ -106,12 +106,14 @@ const ActiveCell: React.FC<Props> = (props) => {
     if (coordsChanged && exitedEditMode) {
       console.log(
         "SET CELL DATA not active",
-        prevCell?.parser?.(prevCell.value)
+        prevCell?.parser?.(prevCell.value),
+        cell?.parser?.(cell.value)
       );
       prevCell?.parser &&
         setCellData(prevActive, prevCell.parser(prevCell.value));
+      cell?.parser && setCellData(prevActive, cell.parser(cell.value));
     }
-  }, [prevActiveRef, prevCellRef, active, setCellData, mode]);
+  }, [prevActiveRef, prevCellRef, active, cell, setCellData, mode]);
 
   React.useEffect(() => {
     const prevActive = prevActiveRef.current;
