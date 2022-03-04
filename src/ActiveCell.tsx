@@ -92,6 +92,30 @@ const ActiveCell: React.FC<Props> = (props) => {
   React.useEffect(() => {
     const prevActive = prevActiveRef.current;
     const prevCell = prevCellRef.current;
+
+    if (!prevActive || !prevCell) {
+      return;
+    }
+
+    // Commit
+    const coordsChanged =
+      active?.row !== prevActive.row || active?.column !== prevActive.column;
+    const exitedEditMode = mode !== "edit";
+
+    console.log("use effect active", prevActive, active, coordsChanged, mode);
+    if (coordsChanged && exitedEditMode) {
+      console.log(
+        "SET CELL DATA not active",
+        prevCell?.parser?.(prevCell.value)
+      );
+      prevCell?.parser &&
+        setCellData(prevActive, prevCell.parser(prevCell.value));
+    }
+  }, [prevActiveRef, prevCellRef, active, setCellData, mode]);
+
+  React.useEffect(() => {
+    const prevActive = prevActiveRef.current;
+    const prevCell = prevCellRef.current;
     prevActiveRef.current = active;
     prevCellRef.current = cell;
 
@@ -124,30 +148,6 @@ const ActiveCell: React.FC<Props> = (props) => {
       initialCellRef.current = cell;
     }
   });
-
-  React.useEffect(() => {
-    const prevActive = prevActiveRef.current;
-    const prevCell = prevCellRef.current;
-
-    if (!prevActive || !prevCell) {
-      return;
-    }
-
-    // Commit
-    const coordsChanged =
-      active?.row !== prevActive.row || active?.column !== prevActive.column;
-    const exitedEditMode = mode !== "edit";
-
-    console.log("use effect active", prevActive, active, coordsChanged, mode);
-    if (!coordsChanged && exitedEditMode) {
-      console.log(
-        "SET CELL DATA not active",
-        prevCell?.parser?.(prevCell.value)
-      );
-      prevCell?.parser &&
-        setCellData(prevActive, prevCell.parser(prevCell.value));
-    }
-  }, [prevActiveRef, prevCellRef, active, setCellData, mode]);
 
   const DataEditor = (cell && cell.DataEditor) || props.DataEditor;
   const readOnly = cell && cell.readOnly;
