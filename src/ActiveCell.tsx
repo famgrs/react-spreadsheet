@@ -97,21 +97,16 @@ const ActiveCell: React.FC<Props> = (props) => {
       return;
     }
 
-    // Commit
     const coordsChanged =
       active?.row !== prevActive.row || active?.column !== prevActive.column;
     const exitedEditMode = mode !== "edit";
 
-    console.log("use effect active", prevActive, active, coordsChanged, mode);
     if (coordsChanged && exitedEditMode) {
-      console.log(
-        "SET CELL DATA not active",
-        prevCell?.parser?.(prevCell.value),
-        cell?.parser?.(cell.value)
-      );
       prevCell?.parser &&
-        setCellData(prevActive, prevCell.parser(prevCell.value));
-      cell?.parser && setCellData(prevActive, cell.parser(cell.value));
+        setCellData(prevActive, {
+          ...prevCell,
+          value: prevCell.parser(prevCell.value),
+        });
     }
   }, [prevActiveRef, prevCellRef, active, cell, setCellData, mode]);
 
